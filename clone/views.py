@@ -31,7 +31,7 @@ def login_user(request):
             user=authenticate(request,username=usern,password=passw)
             if user is not None:
                 login(request,user)
-                return HttpResponse('Login successful')
+                return redirect(index)
             else:
                 return HttpResponse('Such a user does not exist')
         else:
@@ -39,3 +39,11 @@ def login_user(request):
     
     return render(request,'auth/login.html',{'form':form})
 
+def index(request):
+    return render(request,'index.html')
+
+def profile(request, id):
+    
+    user = User.objects.get(id=id)
+
+    return render(request,"profile/profile.html")
