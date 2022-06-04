@@ -1,0 +1,8 @@
+
+Hello {{first_name}}
+
+Welcome To SniffGram
+Your World Of Niche Awaits
+We're so glad you're here! You are now part of a growing community of enthusiasts who love sharing pictures and viewing other people's pictures.
+
+We really appreciate you. Enjoy your stay.
