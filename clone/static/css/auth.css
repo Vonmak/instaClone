@@ -1,8 +1,18 @@
-* {
+.body {
     background: black;
+    height: 100vh;
 }
 
+.container {
+    height: 80vh;
+}
+
+.body,
+.container,
 .register {
-    border: 1px solid red;
-    color: blue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
 }
