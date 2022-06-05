@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import HttpResponse
 from django.urls import reverse
-from .forms import customRegistrationForm, LoginForm, imageAddForm
+from .forms import customRegistrationForm, LoginForm, imageAddForm, commentAddForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .emails import send_welcome_email
 from django.contrib.auth.decorators import login_required
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
-from .models import Image
+from .models import Image, Comment
 
 
 # Create your views here.
@@ -84,3 +84,21 @@ def imageView(request, id):
     pic = Image.objects.get(id=id)
     likes = pic.total_likes()
     return render(request,"imageView.html",{'pic': pic, 'likes': likes})
+
+@login_required(login_url='/login')
+def commentAdd(request, image_id):  
+    current_user = request.user
+    current_image = Image.objects.get(id=image_id)
+    if request.method == 'POST':   
+        form = commentAddForm(request.POST)
+        if form.is_valid(): 
+            form = form.save(commit=False) 
+            form.user=current_user 
+            form.image=current_image
+            form.save()  
+              
+            return redirect(index)  
+    else:  
+        form = commentAddForm()  
+  
+    return render(request, 'commentAdd.html', {'form': form})  
