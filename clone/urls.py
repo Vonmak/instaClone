@@ -8,5 +8,7 @@ urlpatterns=[
     path('',views.index, name='index'),
     re_path(r'^profile/(\d+)', views.profile, name='profile'),
     path('image/', views.image_request, name = "image"),
+    re_path(r'^like/(\d+)', views.like, name = "like_image"),
+    re_path(r'^imageView/(\d+)', views.imageView, name = "imageView"),
    
 ]
