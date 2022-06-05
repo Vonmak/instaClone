@@ -10,5 +10,6 @@ urlpatterns=[
     path('image/', views.image_request, name = "image"),
     re_path(r'^like/(\d+)', views.like, name = "like_image"),
     re_path(r'^imageView/(\d+)', views.imageView, name = "imageView"),
-   
+    # path('comment/',views.commentAdd, name='comment'),
+    re_path(r'^comment/(?P<image_id>\d+)', views.commentAdd, name='comment'),
 ]
