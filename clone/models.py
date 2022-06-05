@@ -27,8 +27,10 @@ class Image(models.Model):
     imageCaption= models.TextField()
     profile= models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
     pub_date= models.DateTimeField(auto_now_add=True)
-    likes= models.IntegerField(default=0)
-    dislikes= models.IntegerField(default=0)
+    likes=models.ManyToManyField(User, related_name="image_post")
+    
+    def total_likes(self):
+        return self.likes.count()
     
     
     def __str__(self):
@@ -44,22 +46,7 @@ class Image(models.Model):
     def get_images(cls):
         images = cls.objects.all()
         return images
-    
-
-
-# class Preference(models.Model):
-#     user= models.ForeignKey(User, on_delete=models.CASCADE)
-#     post= models.ForeignKey(Image, on_delete=models.DO_NOTHING)
-#     value= models.IntegerField()
-#     date= models.DateTimeField(auto_now_add = True)
-
-    
-#     def __str__(self):
-#         return str(self.user) + ':' + str(self.post) +':' + str(self.value)
-
-#     class Meta:
-#        unique_together = ("user", "post", "value")
-       
+          
        
 # class Comment(models.Model):
 #     image = models.ForeignKey(Image,blank=True, on_delete=models.CASCADE,related_name='comment')
