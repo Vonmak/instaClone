@@ -14,6 +14,11 @@ from pathlib import Path
 from decouple import config,Csv
 import os
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +40,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'clone',
     'bootstrap5',
+    'cloudinary',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -149,3 +155,10 @@ AUTHENTICATION_BACKENDS=[
     'django.contrib.auth.backends.ModelBackend',
     'clone.customAuth.EmailAuth'
 ]
+
+# adding config
+cloudinary.config( 
+  cloud_name = "ddtmsdlip", 
+  api_key = "356757256393764", 
+  api_secret = "V-68rzwrl7fFATIiLhanN9z8zts" 
+)
