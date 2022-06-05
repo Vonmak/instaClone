@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<img src="{{pic.image.url}}" alt="" class="img-responsive indexImage" />
+
+<form method="POST" action="{%url 'like_image' pic.id%}">
+  {% csrf_token %}
+  <button
+    type="submit"
+    name="image_id"
+    class="btn btn-primary"
+    value="{{pic.id}}"
+  >
+    like
+  </button>
+</form>
+{{likes}} {% endblock %}
