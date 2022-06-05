@@ -1,0 +1,13 @@
+.add1,
+.add2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* color: #fff; */
+}
+
+.indexImage {
+    height: 450px;
+    width: 325px;
+}
