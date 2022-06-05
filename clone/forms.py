@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import Image
+from .models import Image, Comment
 
 class customRegistrationForm( UserCreationForm, forms.ModelForm):
     class Meta:
@@ -19,3 +19,7 @@ class imageAddForm(forms.ModelForm):
         fields = ['image','imageName','imageCaption']
         exclude =['profile']
     
+class commentAddForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment']
