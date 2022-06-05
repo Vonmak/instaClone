@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .models import Image
 
 class customRegistrationForm( UserCreationForm, forms.ModelForm):
     class Meta:
@@ -10,4 +11,11 @@ class customRegistrationForm( UserCreationForm, forms.ModelForm):
 class LoginForm(forms.Form):
     email=forms.CharField(max_length=50)
     password=forms.CharField(max_length=20, widget=forms.PasswordInput)
-  
+    
+    
+class imageAddForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['image','imageName','imageCaption']
+        exclude =['profile']
+    
