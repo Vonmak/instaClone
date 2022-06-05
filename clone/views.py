@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import customRegistrationForm, LoginForm
+from .forms import customRegistrationForm, LoginForm, imageAddForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .emails import send_welcome_email
+from django.contrib.auth.decorators import login_required
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+from .models import Image
+
 
 # Create your views here.
 def customUserRegister(request):
@@ -39,11 +44,32 @@ def login_user(request):
     
     return render(request,'auth/login.html',{'form':form})
 
+def logout_user(request):
+    logout(request)
+    return redirect('/login')
+
+@login_required(login_url='/login')
 def index(request):
-    return render(request,'index.html')
+    images = Image.get_images()
+    return render(request,'index.html',{'images': images})
 
-def profile(request, id):
-    
+def profile(request, id):  
     user = User.objects.get(id=id)
-
     return render(request,"profile/profile.html")
+
+@login_required(login_url='/login')
+def image_request(request):  
+    current_user = request.user
+    if request.method == 'POST':   
+        form = imageAddForm(request.POST, request.FILES)
+        if form.is_valid(): 
+            form = form.save(commit=False) 
+            form.user=current_user 
+            form.save()  
+              
+            return redirect(index)  
+    else:  
+        form = imageAddForm()  
+  
+    return render(request, 'imageAdd.html', {'form': form})  
+
