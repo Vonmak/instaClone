@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import HttpResponse
+from django.urls import reverse
 from .forms import customRegistrationForm, LoginForm, imageAddForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -73,3 +74,13 @@ def image_request(request):
   
     return render(request, 'imageAdd.html', {'form': form})  
 
+def like(request, image_id):
+    image = Image.objects.get(id=image_id)
+    image.likes.add(request.user)
+    image.save()
+    return HttpResponseRedirect(reverse('imageView', args=[str(image_id)]))
+
+def imageView(request, id):  
+    pic = Image.objects.get(id=id)
+    likes = pic.total_likes()
+    return render(request,"imageView.html",{'pic': pic, 'likes': likes})
