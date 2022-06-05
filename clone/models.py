@@ -48,21 +48,22 @@ class Image(models.Model):
         return images
           
        
-# class Comment(models.Model):
-#     image = models.ForeignKey(Image,blank=True, on_delete=models.CASCADE,related_name='comment')
-#     comment_owner = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)
-#     comment= models.TextField()
+class Comment(models.Model):
+    image = models.ForeignKey(Image,blank=True, on_delete=models.CASCADE,related_name='comments')
+    user = models.ForeignKey(User, blank=True, on_delete=models.CASCADE)
+    comment= models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
 
-#     def save_comment(self):
-#         self.save()
+    def save_comment(self):
+        self.save()
 
-#     def delete_comment(self):
-#         self.delete()
+    def delete_comment(self):
+        self.delete()
 
-#     @classmethod
-#     def get_image_comments(cls, id):
-#         comments = Comment.objects.filter(image__pk=id)
-#         return comments
+    @classmethod
+    def get_image_comments(cls, id):
+        comments = Comment.objects.filter(image__pk=id)
+        return comments
 
-#     def __str__(self):
-#         return str(self.comment)
+    def __str__(self):
+        return str(self.comment)
