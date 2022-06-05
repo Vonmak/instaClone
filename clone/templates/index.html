@@ -4,4 +4,18 @@
   <img src="{{image.image.url}}" alt="" class="img-responsive indexImage"
 /></a>
 <a href=""><i class="fa fa-heart"></i></a>
-{{image.user.username}} {%endfor%} {% endblock %}
+{{image.user.username}}
+ {% if not image.comments.all %}
+ no comments
+<a href="/comment/{{image.id}}"><button class="btn btn-primary" type="submit">Add Comment</button></a> 
+{% else%}
+{%for comment in image.comments.all %} 
+{{comment.comment}} 
+{{comment.user.username}}
+{{comment.pub_date}} 
+
+{% endfor %} 
+<a href="/comment/{{image.id}}"><button class="btn btn-primary" type="submit">Add Comment</button></a> 
+{% endif %} 
+{%endfor%} 
+{% endblock %}
