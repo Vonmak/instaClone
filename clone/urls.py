@@ -12,4 +12,8 @@ urlpatterns=[
     re_path(r'^imageView/(\d+)', views.imageView, name = "imageView"),
     # path('comment/',views.commentAdd, name='comment'),
     re_path(r'^comment/(?P<image_id>\d+)', views.commentAdd, name='comment'),
+    path('search/',views.search, name='search'),
+    path('newprofile/',views.update_profile,name ='newprofile'),
+    re_path(r'^edit/(\d+)', views.edit_profile, name='edit_profile'),
+    re_path(r'^follow/(?P<user_id>\d+)', views.follow, name='follow'),
 ]
