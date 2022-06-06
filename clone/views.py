@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import HttpResponse
 from django.urls import reverse
-from .forms import customRegistrationForm, LoginForm, imageAddForm, commentAddForm
+from .forms import customRegistrationForm, LoginForm, imageAddForm, commentAddForm, ProfileForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .emails import send_welcome_email
 from django.contrib.auth.decorators import login_required
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
-from .models import Image, Comment
+from .models import Image, Comment, Profile
 
 
 # Create your views here.
@@ -24,7 +24,7 @@ def customUserRegister(request):
             send_welcome_email(first_name,email)
             form.save()
         return redirect(login_user)
-    return render(request, 'auth/register.html',{'form': form})
+    return render(request, 'auth/register.html',locals())
 
 
 def login_user(request):
@@ -43,7 +43,7 @@ def login_user(request):
         else:
             return HttpResponse("Form is not Valid")
     
-    return render(request,'auth/login.html',{'form':form})
+    return render(request,'auth/login.html',locals())
 
 def logout_user(request):
     logout(request)
@@ -52,11 +52,43 @@ def logout_user(request):
 @login_required(login_url='/login')
 def index(request):
     images = Image.get_images()
-    return render(request,'index.html',{'images': images})
+    return render(request,'index.html',locals())
+
+
+@login_required(login_url='/login')
+def update_profile(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = ProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            profile =form.save(commit=False)
+            profile.owner = current_user
+            profile.save()
+    else:
+        form=ProfileForm()
+
+    return render(request, 'profile/update.html', locals())
+
+def edit_profile(request, id):
+    photo = Profile.objects.get(id=id)
+    current_user = request.user
+    if request.method == 'POST':
+        form = ProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            profile =form.save(commit=False)
+            profile.owner = current_user
+            profile.save()
+    return render(request, 'profile/edit.html',locals())
 
 def profile(request, id):  
-    user = User.objects.get(id=id)
-    return render(request,"profile/profile.html")
+    seek_user=User.objects.filter(id=id).first()
+    profile = seek_user.profile
+    profile_details = Profile.get_by_id(id)
+    images = Image.filter_by_user(id)
+    usersss = User.objects.get(id=id)
+    people=User.objects.all()
+    # likes = Image.likes.count()
+    return render(request,"profile/profile.html",locals())
 
 @login_required(login_url='/login')
 def image_request(request):  
@@ -72,7 +104,7 @@ def image_request(request):
     else:  
         form = imageAddForm()  
   
-    return render(request, 'imageAdd.html', {'form': form})  
+    return render(request, 'imageAdd.html', locals())  
 
 def like(request, image_id):
     image = Image.objects.get(id=image_id)
@@ -83,7 +115,7 @@ def like(request, image_id):
 def imageView(request, id):  
     pic = Image.objects.get(id=id)
     likes = pic.total_likes()
-    return render(request,"imageView.html",{'pic': pic, 'likes': likes})
+    return render(request,"imageView.html",locals())
 
 @login_required(login_url='/login')
 def commentAdd(request, image_id):  
@@ -101,4 +133,21 @@ def commentAdd(request, image_id):
     else:  
         form = commentAddForm()  
   
-    return render(request, 'commentAdd.html', {'form': form})  
+    return render(request, 'commentAdd.html', locals())  
+
+def search(request):
+    profiles = User.objects.all()
+
+    if 'username' in request.GET and request.GET['username']:
+        search_term = request.GET.get('username')
+        results = User.objects.filter(username__icontains=search_term)
+        print(results)
+
+        return render(request,'search.html',locals())
+
+    return redirect(index)
+
+
+def follow(request,user_id):
+    users=User.objects.get(id=user_id)
+    return redirect('/profile/', locals())

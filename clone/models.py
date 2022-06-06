@@ -16,7 +16,33 @@ class Profile(models.Model):
         return loc
     
     def __str__(self):
-        return self.name
+        return self.bio
+    
+    def save_image(self):
+            self.save()
+        
+    def delete_image(self):
+        self.delete()
+        
+    def update_profile(self, new_photo):
+        try:
+            self.photo = new_photo
+            self.save()
+            return self
+        except self.DoesNotExist:
+            print('Images already exists')
+    
+    
+    @classmethod
+    def get_by_id(cls, id):
+        profile = Profile.objects.get(owner=id)
+        return profile
+
+    @classmethod
+    def get_profile_by_username(cls, owner):
+        profiles = cls.objects.filter(owner__contains=owner)
+        return profiles
+
     
     
     
@@ -41,12 +67,18 @@ class Image(models.Model):
         
     def delete_image(self):
         self.delete()
+        
+    # def update_caption()
     
     @classmethod
     def get_images(cls):
         images = cls.objects.all()
         return images
           
+    @classmethod
+    def filter_by_user(cls, user):
+        images = cls.objects.filter(user__id__icontains=user).all()
+        return images
        
 class Comment(models.Model):
     image = models.ForeignKey(Image,blank=True, on_delete=models.CASCADE,related_name='comments')
