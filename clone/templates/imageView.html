@@ -1,15 +1,56 @@
 {% extends 'base.html' %} {% block content %}
-<img src="{{pic.image.url}}" alt="" class="img-responsive indexImage" />
+<div class="container view">
+  <div class="row view">
+    <div class="col-md-1"></div>
+    <div class="col-md-6 image-main">
+      <img
+        src="{{pic.image.url}}"
+        alt=""
+        class="img-responsive image-view"
+      /><br />
+      <ul class="list-inline">
+        <li class="list-inline-item">
+          <form method="POST" action="{%url 'like_image' pic.id%}">
+            {% csrf_token %}
+            <button
+              type="submit"
+              name="image_id"
+              value="{{pic.id}}"
+              style="border: none"
+            >
+              <i
+                class="fa fa-heart btn btn-outline-danger"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </form>
+        </li>
+        <li class="list-inline-item text-">{{likes}}</li>
+        <li class="list-inline-item">
+          <a href="/comment/{{pic.id}}">
+            <i
+              class="fa fa-comment-o btn btn-outline-info"
+              aria-hidden="true"
+            ></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-3 bg bg-white comments">
+      <h4 class="text-center">Comments</h4>
+      {% if not pic.comments.all %}
+      <li class="list-inline-item"><p>No Comments...</p></li>
 
-<form method="POST" action="{%url 'like_image' pic.id%}">
-  {% csrf_token %}
-  <button
-    type="submit"
-    name="image_id"
-    class="btn btn-primary"
-    value="{{pic.id}}"
-  >
-    like
-  </button>
-</form>
-{{likes}} {% endblock %}
+      {% else%} {%for comment in pic.comments.all %}
+      <p>{{comment.comment|title}}</p>
+      <small
+        >Posted by <strong>{{comment.user.username| title}} </strong>at
+        {{comment.pub_date}}
+      </small>
+
+      {% endfor %} {% endif%}
+    </div>
+  </div>
+</div>
+{%endblock%}
