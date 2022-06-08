@@ -1,5 +1,5 @@
 .body {
-    background: black;
+    background: #e9ecef;
     height: 100vh;
 }
 
@@ -14,5 +14,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #fff;
+}
+
+input {
+    width: 400px;
 }
