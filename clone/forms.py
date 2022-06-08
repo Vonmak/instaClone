@@ -18,7 +18,6 @@ class imageAddForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ['image','imageName','imageCaption']
-        exclude =['profile']
     
 class commentAddForm(forms.ModelForm):
     class Meta:
@@ -27,6 +26,7 @@ class commentAddForm(forms.ModelForm):
         
         
 class ProfileForm(forms.ModelForm):
+    birth_date = forms.DateField(widget=forms.SelectDateWidget)
     class Meta:
         model = Profile
-        exclude=['owner']
+        fields=['photo','bio','birth_date']
