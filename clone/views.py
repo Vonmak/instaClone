@@ -10,18 +10,21 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 from .models import Image, Comment, Profile
 
-
 # Create your views here.
 def customUserRegister(request):
     form = customRegistrationForm
     if request.method == 'POST':
         form = customRegistrationForm(request.POST)
         if form.is_valid():
-            # form.save()
-            first_name = form.cleaned_data['first_name']
+            username = form.cleaned_data['username']
             email = form.cleaned_data['email']
-            recipient = User(first_name=first_name, email=email)
-            send_welcome_email(first_name,email)
+            # recipient = User(username=username, email=email)
+            # send_welcome_email(username,email)
+            user =  form.save()
+            user.refresh_from_db()
+            user.profile.birth_date = form.cleaned_data.get('birth_date')
+            user.save()
+          
             form.save()
         return redirect(login_user)
     return render(request, 'auth/register.html',locals())
@@ -51,7 +54,9 @@ def logout_user(request):
 
 @login_required(login_url='/login')
 def index(request):
-    images = Image.get_images()
+    images = Image.get_images().order_by('-pub_date')
+    profiles= Profile.objects.all()
+    # likes = pic.total_likes()
     return render(request,'index.html',locals())
 
 
@@ -59,7 +64,7 @@ def index(request):
 def update_profile(request):
     current_user = request.user
     if request.method == 'POST':
-        form = ProfileForm(request.POST,request.FILES)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             profile =form.save(commit=False)
             profile.owner = current_user
@@ -69,26 +74,17 @@ def update_profile(request):
 
     return render(request, 'profile/update.html', locals())
 
-def edit_profile(request, id):
-    photo = Profile.objects.get(id=id)
-    current_user = request.user
-    if request.method == 'POST':
-        form = ProfileForm(request.POST,request.FILES)
-        if form.is_valid():
-            profile =form.save(commit=False)
-            profile.owner = current_user
-            profile.save()
-    return render(request, 'profile/edit.html',locals())
 
 def profile(request, id):  
-    seek_user=User.objects.filter(id=id).first()
-    profile = seek_user.profile
-    profile_details = Profile.get_by_id(id)
-    images = Image.filter_by_user(id)
-    usersss = User.objects.get(id=id)
-    people=User.objects.all()
-    # likes = Image.likes.count()
-    return render(request,"profile/profile.html",locals())
+    user=User.objects.filter(id=id).first()
+    profile = Profile.objects.get(owner=id)
+    images = Image.filter_by_user(id).order_by('-pub_date')
+    return render(request,"profile/profile.html",{'user':user, 'images':images, 'profile':profile})
+
+def lookup_profile(request, id):
+    profile = Profile.objects.get(id=id)
+    images= Image.objects.filter(id=profile.id).order_by('-pub_date').all()
+    return render(request,"profile/profile.html",{'images':images, 'profile':profile})
 
 @login_required(login_url='/login')
 def image_request(request):  
