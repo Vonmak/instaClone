@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse
 from .forms import customRegistrationForm, LoginForm, imageAddForm, commentAddForm, ProfileForm
@@ -8,7 +8,7 @@ from .emails import send_welcome_email
 from django.contrib.auth.decorators import login_required
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
-from .models import Image, Comment, Profile
+from .models import Image, Comment, Profile, Follow
 
 # Create your views here.
 def customUserRegister(request):
@@ -85,7 +85,20 @@ def profile(request, id):
 def lookup_profile(request, id):
     profile = Profile.objects.get(id=id)
     images= Image.objects.filter(id=profile.id).order_by('-pub_date').all()
-    return render(request,"profile/profile.html",{'images':images, 'profile':profile})
+   
+    user_prof = get_object_or_404(User, id=id)
+    if request.user == user_prof:
+        return redirect('profile', id=request.user.id)
+    user_posts = user_prof.profile.images.all()
+    
+    followers = Follow.objects.filter(followed=user_prof.profile)
+    follow_status = None
+    for follower in followers:
+        if request.user.profile == follower.follower:
+            follow_status = True
+        else:
+            follow_status = False
+    return render(request,"profile/profile.html",{'images':images, 'profile':profile, 'user_prof': user_prof,'user_posts': user_posts,'followers': followers, 'follow_status': follow_status})
 
 @login_required(login_url='/login')
 def image_request(request):  
@@ -146,6 +159,17 @@ def search(request):
     return redirect(index)
 
 
-def follow(request,user_id):
-    users=User.objects.get(id=user_id)
-    return redirect('/profile/', locals())
+def unfollow(request, to_unfollow):
+    if request.method == 'GET':
+        user_profile2 = Profile.objects.get(pk=to_unfollow)
+        unfollow_d = Follow.objects.filter(follower=request.user.profile, followed=user_profile2)
+        unfollow_d.delete()
+        return redirect('profile', user_profile2.owner.id)
+
+
+def follow(request, to_follow):
+    if request.method == 'GET':
+        user_profile3 = Profile.objects.get(pk=to_follow)
+        follow_s = Follow(follower=request.user.profile, followed=user_profile3)
+        follow_s.save()
+        return redirect('profile', user_profile3.owner.id)

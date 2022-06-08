@@ -33,17 +33,21 @@
               <a href="{% url 'newprofile' %}" class="btn btn-outline-info">Edit Profile</a>
               {%else%}
               <li class="list-inline-item">
-                <a href="" class="btn btn-outline-info">Follow</a>
+                {% if follow_status %}
+                <a class="btn btn-sm btn-outline-danger ml-5" href="{% url 'unfollow' user_prof.profile.owner.id %}">Unfollow</a>
+                {%else%}
+                <a class="btn btn-sm btn-primary ml-5" href="{% url 'follow' user_prof.profile.owner.id %}">Follow</a>
+                {% endif %}
               </li>
               {% endif %}
 
             </li>
           </ul>
           <ul class="list-inline">   <li class="list-inline-item">
-            <span class="font-weight-bold">{{images|length}} </span> Posts
+            <span class="font-weight-bold">{{images.count}} </span> Posts
           </li>
-          <li class="list-inline-item">Following</li>
-          <li class="list-inline-item">Followers</li></ul>
+          <li class="list-inline-item"><strong>{{ user_prof.profile.following|length }}</strong> Following</li>
+          <li class="list-inline-item"><strong>{{ user_prof.profile.followers|length }}</strong>Followers</li></ul>
         </div>
       </div>
     </div>

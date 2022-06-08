@@ -14,5 +14,6 @@ urlpatterns=[
     re_path(r'^comment/(?P<image_id>\d+)', views.commentAdd, name='comment'),
     path('search/',views.search, name='search'),
     path('newprofile/',views.update_profile,name ='newprofile'),
-    re_path(r'^follow/(?P<user_id>\d+)', views.follow, name='follow'),
+    path('unfollow/<to_unfollow>', views.unfollow, name='unfollow'),
+    path('follow/<to_follow>', views.follow, name='follow')
 ]
