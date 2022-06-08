@@ -2,14 +2,30 @@ from django.db import models
 import datetime as dt
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
+class followers(models.Model):
+    followers = models.CharField(max_length=50)
+    user= models.CharField( max_length=50)
+
+    def __str__(self):
+        return self.user
+
 class Profile(models.Model):
     photo = CloudinaryField('image')
     bio = models.CharField(max_length=40)
-    owner = models.OneToOneField(User,blank=True, on_delete=models.CASCADE, related_name="profile")
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    birth_date = models.DateField(null=True, blank=True)
     
+    @receiver(post_save, sender=User)
+    def update_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(owner=instance)
+        instance.profile.save()
     
+
     @classmethod
     def get_all(cls):
         loc = Profile.objects.all()
@@ -35,14 +51,18 @@ class Profile(models.Model):
     
     @classmethod
     def get_by_id(cls, id):
-        profile = Profile.objects.get(owner=id)
-        return profile
+        profile = cls.objects.get(id=id)
+        return profile  
 
     @classmethod
     def get_profile_by_username(cls, owner):
         profiles = cls.objects.filter(owner__contains=owner)
         return profiles
 
+    @classmethod
+    def get_profile(cls):
+        profiles = cls.objects.all()
+        return profiles
     
     
     
@@ -51,7 +71,7 @@ class Image(models.Model):
     user = models.ForeignKey(User,blank=True, on_delete=models.CASCADE)
     imageName= models.CharField(max_length=70)
     imageCaption= models.TextField()
-    profile= models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True)
+    profile= models.ForeignKey(Profile,blank=True, on_delete=models.CASCADE, related_name='images')
     pub_date= models.DateTimeField(auto_now_add=True)
     likes=models.ManyToManyField(User, related_name="image_post")
     
@@ -67,8 +87,6 @@ class Image(models.Model):
         
     def delete_image(self):
         self.delete()
-        
-    # def update_caption()
     
     @classmethod
     def get_images(cls):
