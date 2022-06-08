@@ -31,4 +31,6 @@ Use the package manager pip to install all project requirements.
 * [Vonmak](https://github.com/Vonmak)
 
 ## Known Bugs
-* There are no known bugs currently but pull requests are allowed incase you spot a bug
+* When you click on follow it opens the followed users account but records the follow in the database.
+* the issue is the number of follows dont show.
+* also the email sending ability hasan issue.
