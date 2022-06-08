@@ -1,31 +1,16 @@
 {% extends 'base.html' %} {% block content %}
 <div class="container">
   <div class="row">
-    {% if results %} {% for result in results %}
-    <div
-      class="row"
-      style="
-        overflow: hidden;
-        -webkit-border-radius: 50px;
-        -moz-border-radius: 50px;
-        border-radius: 100px;
-        width: 90px;
-        height: 100px;
-      "
-    >
-      {% if result.photo %}
-      <img src="{{result.photo.url}}" class="img-circle" alt="image" />
-      {% else %}
-      <img src="/static/img/avi.png" alt="avatar" />
-      {% endif %}
-    </div>
-    <br />
+    {% if results %} {% for result in results %} {% if result.profile.photo %}
+    <img src="{{result.profile.photo.url}}" class="img-fluid rounded-pill index-profile" alt="image" />
+    {% else %}
+    <img src="/static/img/avi.png" alt="avatar" /><br><br>
+    {% endif %}
+
     <ul style="list-style: none">
-      <li class="owner">{{result.profile.owner}}</li>
+      <li class="owner">{{result.profile.owner|title}}</li><br><br>
       <li style="list-style: none">
-        <a class="btn btn-primary" href="/profile/{{result.profile.owner.id}}"
-          >explore</a
-        >
+        <a class="btn btn-primary" href="/look/{{result.profile.id}}">explore</a>
       </li>
     </ul>
     {% endfor %} {% else %}
