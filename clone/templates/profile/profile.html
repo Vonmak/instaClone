@@ -1,121 +1,66 @@
 {% extends 'base.html'%}{%block content%}
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="row">
-        <div class="col-md-3">
-          <div style="overflow: hidden; width: 90px; height: 90px">
-            {% if profile_details.photo %}
-            <img
-              class="img-fluid rounded-pill"
-              src="{{profile_details.photo.url}}"
-              alt="photo"
-            />
-            {% else %}
-            <img class="img-rounded" src=" " />
-            {% endif %}
-          </div>
-          <br />
-          <h4>{{profile_details.owner|title}}</h4>
-          <p>{{profile_details.bio}}</p>
+<div class="container text-dark">
+  <div class="row prof1">
+    <div class="col-md-12 prof2">
+      <div class="row prof3">
+        <div class="col-md-4 prof4">
+          {% if profile.photo %}
+          <ul class="list-inline">
           <li class="list-inline-item">
-            <a href="/edit/{{profile_details.id}}">Edit Profile</a>
-          </li>
-          <a href="/image">
-            <button class="btn btn-primary" type="submit">Add Image</button></a
-          >
-        </div>
-
-        <div class="col-md-5 text-center">
+            <img
+            class="img-fluid rounded-pill index-profile"
+            src="{{profile.photo.url}}"
+            alt="photo"/>
+            </li>
+            <li class="list-inline-item"><h4>{{profile.owner|title}}</h4></li>
+           
+          </ul>
+          <p>{{profile.bio|title}}</p>
+          {% else %}
           <ul class="list-inline">
             <li class="list-inline-item">
-              <span class="font-weight-bold">{{images|length}} </span> Posts
-            </li>
-            <span class="font-weight-bold"> {{following}} </span>
-            Following
-            <span class="font-weight-bold"> {{follower}} </span
-            >Followers {% if people in pip_following %}
+              <img class="img-fluid rounded-pill index-profile" src=" " />
+              </li>
+              <li class="list-inline-item"><h4>{{profile.owner|title}}</h4></li>
+            </ul>
+          {% endif %} 
+        </div>
+        <div class="col-md-5 prof6">
+          <ul class="list-inline">
             <li class="list-inline-item">
-              <span class="font-weight-bold"></span> Following
+              {% if profile.owner.id == user.profile.owner.id%}
+              <a href="{% url 'image' %}"class="btn btn-outline-info">Add Post</a>
+              <a href="{% url 'newprofile' %}" class="btn btn-outline-info">Edit Profile</a>
+              {%else%}
+              <li class="list-inline-item">
+                <a href="" class="btn btn-outline-info">Follow</a>
+              </li>
+              {% endif %}
+
             </li>
-            {% else %}
-            <li href="" class="list-inline-item"></li>
-
-            {% endif %}
           </ul>
-
-          {% if profile.owner == user.id %}
-          <p><a href="{% url 'upload_image' %}">Add Image</a></p>
-          {% endif %}
-        </div>
-        <ul class="list-inline">
-          {% if profile.owner.id == user.id %}
-          <li class="list-inline-item">
-            <a href="{% url 'newprofile' %}">Add Profile</a>
+          <ul class="list-inline">   <li class="list-inline-item">
+            <span class="font-weight-bold">{{images|length}} </span> Posts
           </li>
-
-          {% else %}
-          <li class="list-inline-item">
-            <a href="" class="btn btn-primary">Follow</a>
-          </li>
-          {% endif %} {{images.imageName}}
-        </ul>
-      </div>
-    </div>
-  </div>
-  <hr />
-  <div class="row">
-    {% for image in images %}
-    <div class="col-md-4">
-      <h3 class="card-title">{{image.imageCaption}}</h3>
-      <div class="card" style="width: auto">
-        {{image.user.username}}
-        <img src="{{image.image.url}}" alt="Image" class="card-img-top" />
-      </div>
-
-      <div class="container">
-        <ul class="list-inline">
-          <li class="list-inline-item">
-            <a href=" {% url 'like_image' image.id %}">
-              <i
-                class="fa fa-heart-o"
-                style="color: black"
-                aria-hidden="true"
-              ></i
-            ></a>
-
-            <a href=" {% url 'comment' image_id=image.id %}">
-              <i
-                class="fa fa-comment-o"
-                aria-hidden="true"
-                style="color: black"
-              ></i
-            ></a>
-          </li>
-          <p></p>
-          {{likes|length}} likes
-        </ul>
-        <ul class="list-inline">
-          <li class="list-inline-item">
-            <h5>
-              <strong>{{image.profile.username}}</strong> {{image.caption}}
-            </h5>
-          </li>
-        </ul>
-        <div class="card-body text-center">
-          {% for comment in comments %} {% if comment.image_id == image.id%}
-          <p class="">{{comments.image_id|length}} comments</p>
-          <small>{{comment.comment_owner}}</small>
-          <p>{{comment.comment}}</p>
-          <hr />
-
-          {% endif %} {% endfor %}
+          <li class="list-inline-item">Following</li>
+          <li class="list-inline-item">Followers</li></ul>
         </div>
       </div>
     </div>
-    {% empty %} {% endfor %}
+    <hr />
+    <div class="row prof8">
+      {% if images %}
+      {% for image in images %}
+      <div class="col-md-2 prof9"> 
+        <div class="card prof10" >
+          <img src="{{image.image.url}}" alt="Image" class="card-img-top prof-image" />
+        </div>
+      </div>
+     {% endfor %}{% else %}
+     <h1 class="text-center">
+     No Posts Yet...</h1>{% endif %}
+    </div>
   </div>
+
+  {% endblock %}
 </div>
-
-{% endblock %}
