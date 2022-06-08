@@ -6,13 +6,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
-class followers(models.Model):
-    followers = models.CharField(max_length=50)
-    user= models.CharField( max_length=50)
-
-    def __str__(self):
-        return self.user
-
 class Profile(models.Model):
     photo = CloudinaryField('image')
     bio = models.CharField(max_length=40)
@@ -32,7 +25,7 @@ class Profile(models.Model):
         return loc
     
     def __str__(self):
-        return self.bio
+        return f'{self.owner.username} Profile'
     
     def save_image(self):
             self.save()
@@ -79,8 +72,11 @@ class Image(models.Model):
         return self.likes.count()
     
     
+    # def __str__(self):
+    #     return self.imageName
+    
     def __str__(self):
-        return self.imageName
+        return f'{self.profile.owner} Image'
     
     def save_image(self):
         self.save()
@@ -117,3 +113,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.comment)
+
+class Follow(models.Model):
+    follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='following')
+    followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='followers')
+
+    def __str__(self):
+        return f'{self.follower} Follow'

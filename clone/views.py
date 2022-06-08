@@ -78,7 +78,8 @@ def update_profile(request):
 def profile(request, id):  
     user=User.objects.filter(id=id).first()
     profile = Profile.objects.get(owner=id)
-    images = Image.filter_by_user(id).order_by('-pub_date')
+    # images = Image.filter_by_user(id).order_by('-pub_date')
+    images = request.user.profile.images.all().order_by('-pub_date')
     return render(request,"profile/profile.html",{'user':user, 'images':images, 'profile':profile})
 
 def lookup_profile(request, id):
@@ -92,15 +93,16 @@ def image_request(request):
     if request.method == 'POST':   
         form = imageAddForm(request.POST, request.FILES)
         if form.is_valid(): 
-            form = form.save(commit=False) 
-            form.user=current_user 
-            form.save()  
+            post = form.save(commit=False) 
+            post.user=request.user
+            post.profile=request.user.profile
+            post.save()  
               
-            return redirect(index)  
+            return HttpResponseRedirect(request.path_info)  
     else:  
         form = imageAddForm()  
   
-    return render(request, 'imageAdd.html', locals())  
+    return render(request, 'imageAdd.html', {'form':form})  
 
 def like(request, image_id):
     image = Image.objects.get(id=image_id)
