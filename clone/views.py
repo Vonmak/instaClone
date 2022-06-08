@@ -52,7 +52,7 @@ def logout_user(request):
     logout(request)
     return redirect('/login')
 
-@login_required(login_url='/login')
+# @login_required(login_url='/login')
 def index(request):
     images = Image.get_images().order_by('-pub_date')
     profiles= Profile.objects.all()
