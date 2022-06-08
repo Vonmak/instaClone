@@ -9,19 +9,15 @@
           <div class="card-item p">
             <ul class="list-inline p">
               <li class="list-inline-item">
-                <a
-                  class="text-dark"
-                  href="/profile/{{image.user.profile.owner.id}}"
-                >
+                <a class="text-dark" href="/profile/{{owner.id}}">
                   <img
                     src="{{image.user.profile.photo.url}}"
                     alt=""
                     class="rounded-pill index-profile"
                 /></a>
-                {{image.profile.bio}}
               </li>
               <li class="list-inline-item">
-                <a class="text-dark" href="/profile/{{image.user.id}}"
+                <a class="text-dark" href="/profile/{{image.user.profile.id}}"
                   ><h5>{{image.user.username|title}}</h5></a
                 >
               </li>
@@ -67,12 +63,12 @@
       </div>
     </div>
     <div class="col-md-3">
-      <h3>People you may know</h3>
+      <h5> <strong>Search for People you may know</strong> </h5>
 
       {% for profile in profiles %}
-      <a href="/profile/{{images.user.id}}" class="text-dark">
-        <h5 >{{profile.owner|title}}</h5></a
-      >
+    
+        <h5>{{profile.owner|title}}</h5>
+      
 
       {% endfor %}
     </div>
