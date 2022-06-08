@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 def send_welcome_email(name,receiver):
     # Creating message subject and sender
     subject = 'SniffGram'
-    sender = 'victor.makori@student.moringashool.com'
+    sender = 'vmakvvv@gmail.com'
 
     #passing in the context vairables
     text_content = render_to_string('email/regEmail.txt',{"name": name})
