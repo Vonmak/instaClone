@@ -69,6 +69,7 @@ def update_profile(request):
             profile =form.save(commit=False)
             profile.owner = current_user
             profile.save()
+            return redirect(index)
     else:
         form=ProfileForm()
 
@@ -78,26 +79,32 @@ def update_profile(request):
 def profile(request, id):  
     user=User.objects.filter(id=id).first()
     profile = Profile.objects.get(owner=id)
-    # images = Image.filter_by_user(id).order_by('-pub_date')
     images = request.user.profile.images.all().order_by('-pub_date')
     return render(request,"profile/profile.html",{'user':user, 'images':images, 'profile':profile})
 
 def lookup_profile(request, id):
     profile = Profile.objects.get(id=id)
-    images= Image.objects.filter(id=profile.id).order_by('-pub_date').all()
+    user = User.objects.get(id=profile.owner.id)
    
+    images = Image.filter_by_user(id)
     user_prof = get_object_or_404(User, id=id)
     if request.user == user_prof:
         return redirect('profile', id=request.user.id)
     user_posts = user_prof.profile.images.all()
     
     followers = Follow.objects.filter(followed=user_prof.profile)
+    folo =Follow.objects.all()
     follow_status = None
     for follower in followers:
         if request.user.profile == follower.follower:
             follow_status = True
         else:
             follow_status = False
+            
+    print(followers)
+    print(profile)
+    print(images)
+    print(user)
     return render(request,"profile/profile.html",{'images':images, 'profile':profile, 'user_prof': user_prof,'user_posts': user_posts,'followers': followers, 'follow_status': follow_status})
 
 @login_required(login_url='/login')
@@ -109,9 +116,10 @@ def image_request(request):
             post = form.save(commit=False) 
             post.user=request.user
             post.profile=request.user.profile
-            post.save()  
+            post.save() 
+            return redirect(index) 
               
-            return HttpResponseRedirect(request.path_info)  
+            # return HttpResponseRedirect(request.path_info)  
     else:  
         form = imageAddForm()  
   
