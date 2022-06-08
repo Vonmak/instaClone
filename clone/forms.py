@@ -18,6 +18,7 @@ class imageAddForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ['image','imageName','imageCaption']
+        exclude = ('profile')
     
 class commentAddForm(forms.ModelForm):
     class Meta:
